@@ -57,7 +57,11 @@ jobs:
     - name: Install Vulkan SDK (macOS)
       if: runner.os == 'macOS'
       run: |
-        brew install vulkan-sdk
+          brew update
+          # Ensure volk is installed first (brew may require this)
+          brew install vulkan-volk || true
+          # Then install the Vulkan SDK
+          brew install vulkan-sdk
 
     - name: Configure CMake
       run: cmake -B build-native -S . -DCMAKE_BUILD_TYPE=Release
