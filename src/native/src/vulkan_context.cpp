@@ -3,6 +3,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <cstring>
+#include <vector>
 
 VulkanContext::VulkanContext() {}
 
@@ -32,26 +33,36 @@ bool VulkanContext::initialize() {
         appInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
         appInfo.apiVersion = VK_API_VERSION_1_2;
 
+        // 查询当前系统/驱动支持的实例扩展
+        uint32_t availExtCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &availExtCount, nullptr);
+        std::vector<VkExtensionProperties> availExts;
+        if (availExtCount > 0) {
+            availExts.resize(availExtCount);
+            vkEnumerateInstanceExtensionProperties(nullptr, &availExtCount, availExts.data());
+        }
+
+        auto hasExtension = [&](const char* name) {
+            for (const auto &e : availExts) {
+                if (std::strcmp(e.extensionName, name) == 0) return true;
+            }
+            return false;
+        };
+
         std::vector<const char*> extensions;
-        // VK_KHR_surface should be available in Vulkan headers; add it unconditionally
-        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+        // surface core
+        if (hasExtension("VK_KHR_surface")) extensions.push_back("VK_KHR_surface");
 
 #ifdef _WIN32
-        extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+        if (hasExtension("VK_KHR_win32_surface")) extensions.push_back("VK_KHR_win32_surface");
 #elif defined(__linux__)
-        // On Linux, prefer XCB if available, otherwise fall back to Xlib or Wayland
-#ifdef VK_KHR_XCB_SURFACE_EXTENSION_NAME
-        extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-#elif defined(VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
-        extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
-#elif defined(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME)
-        extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
-#endif
+        // Prefer XCB, then XLIB, then Wayland when available
+        if (hasExtension("VK_KHR_xcb_surface")) extensions.push_back("VK_KHR_xcb_surface");
+        else if (hasExtension("VK_KHR_xlib_surface")) extensions.push_back("VK_KHR_xlib_surface");
+        else if (hasExtension("VK_KHR_wayland_surface")) extensions.push_back("VK_KHR_wayland_surface");
 #endif
 
-#ifdef VK_EXT_DEBUG_UTILS_EXTENSION_NAME
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
+        if (hasExtension("VK_EXT_debug_utils")) extensions.push_back("VK_EXT_debug_utils");
 
         VkInstanceCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
