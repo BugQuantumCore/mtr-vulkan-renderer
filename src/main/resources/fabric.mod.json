@@ -1,0 +1,42 @@
+{
+    "schemaVersion": 1,
+    "id": "mtr-vulkan-renderer",
+    "version": "1.0.0-alpha-1",
+    "name": "MTR Vulkan Renderer",
+    "description": "Change the renderer of Minecraft Transit Railway to Vulkan.",
+    "authors": [
+        "BugQuantumCore",
+        "Qwen3.7-Max"
+    ],
+    "contact": {
+        "homepage": "https://github.com/BugQuantumCore/mtr-vulkan-renderer"
+    },
+    "license": "MIT",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "com.mtr.vulkanrenderer.MTRVulkanRendererClient"
+        ]
+    },
+    "mixins": [
+        "mtr-vulkan-renderer.mixins.json"
+    ],
+    "accessWidener": "mtr-vulkan-renderer.accesswidener",
+    "depends": {
+        "fabricloader": ">=0.14.14",
+        "minecraft": [
+            "1.20",
+            "1.20.1"
+        ],
+        "java": ">=21",
+        "fabric-api": "*",
+        "mtr": ">=4.0.0",
+        "vulkanmod": ">=0.5.2"
+    },
+    "suggests": {
+        "cloth-config": "*"
+    },
+    "breaks": {
+        "sodium": "*"
+    }
+}

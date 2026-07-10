@@ -1,0 +1,14 @@
+accessWidener v2 named
+
+# 允许访问MTR的渲染相关类
+accessible class mtr/client/render/TrainRenderer
+accessible class mtr/client/render/RailRenderer
+accessible class mtr/client/render/RenderHelper
+accessible class mtr/client/render/SignalRenderer
+accessible method mtr/client/render/TrainRenderer render (Lnet/minecraft/client/util/math/MatrixStack;F)V
+accessible method mtr/client/render/RailRenderer render (Lnet/minecraft/client/util/math/MatrixStack;F)V
+accessible method mtr/client/render/RenderHelper renderImmediate (Lnet/minecraft/client/render/VertexConsumer;IIIIFFFF)V
+
+# 允许访问VulkanMod的内部类
+accessible class vulkanmod/VulkanMod
+accessible class vulkanmod/renderer/VulkanRenderer

@@ -1,0 +1,92 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+    id 'maven-publish'
+    id 'java'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://maven.fabricmc.net/" } // Fabric
+    maven { url "https://maven.shedaniel.me/" } // Cloth Config
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/mtr-vulkan-renderer.accesswidener")
+}
+
+dependencies {
+    // Minecraft & Fabric
+    minecraft "com.mojang:minecraft:1.20.1"
+    mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
+	modImplementation "net.fabricmc:fabric-loader:0.19.3"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.9+1.20.1"
+
+    // MTR (作为依赖 - 实际使用时放入 libs/)
+    modImplementation files("libs/MTR-fabric-4.0.5+1.20.1.jar")
+
+    // VulkanMod (作为依赖)
+    modImplementation files("libs/VulkanMod_1.20.1-0.5.2.jar")
+
+    // LWJGL Vulkan bindings (用于 Java 侧 Vulkan 交互)
+    implementation "org.lwjgl:lwjgl-vulkan:${project.lwjgl_version}"
+    implementation "org.lwjgl:lwjgl-vulkan:${project.lwjgl_version}:natives-linux"
+    implementation "org.lwjgl:lwjgl-vulkan:${project.lwjgl_version}:natives-windows"
+
+    // 配置库
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:11.1.118"
+}
+
+// 构建 C++ 原生库的任务
+task buildNativeLib(type: Exec) {
+    workingDir "${projectDir}"
+    if (System.getProperty('os.name').toLowerCase().contains('windows')) {
+        commandLine 'cmd', '/c', 'cmake', '--build', 'build-native', '--config', 'Release'
+    } else {
+        commandLine 'cmake', '--build', 'build-native'
+    }
+}
+
+task configureNativeBuild(type: Exec) {
+    workingDir "${projectDir}"
+    commandLine 'cmake', '-B', 'build-native', '-S', '.', '-DCMAKE_BUILD_TYPE=Release'
+}
+
+buildNativeLib.dependsOn configureNativeBuild
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+               "minecraft_version": project.minecraft_version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+    // 包含编译好的原生库
+    from("build-native/lib") {
+        include "*.so", "*.dll", "*.dylib"
+        into "native"
+    }
+}

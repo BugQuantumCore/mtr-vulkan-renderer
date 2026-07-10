@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.mtr.vulkanrenderer.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "client": [
+        "MixinTrainRenderer",
+        "MixinRailRenderer",
+        "MixinSignalRenderer",
+        "MixinRenderHelper"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "mixins": []
+}
