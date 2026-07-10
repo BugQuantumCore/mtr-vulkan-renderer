@@ -32,15 +32,26 @@ bool VulkanContext::initialize() {
         appInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0);
         appInfo.apiVersion = VK_API_VERSION_1_2;
 
-        std::vector<const char*> extensions = {
-            VK_KHR_SURFACE_EXTENSION_NAME,
+        std::vector<const char*> extensions;
+        // VK_KHR_surface should be available in Vulkan headers; add it unconditionally
+        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+
 #ifdef _WIN32
-            VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+        extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(__linux__)
-            VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
+        // On Linux, prefer XCB if available, otherwise fall back to Xlib or Wayland
+#ifdef VK_KHR_XCB_SURFACE_EXTENSION_NAME
+        extensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+#elif defined(VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
+        extensions.push_back(VK_KHR_XLIB_SURFACE_EXTENSION_NAME);
+#elif defined(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME)
+        extensions.push_back(VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME);
 #endif
-            VK_EXT_DEBUG_UTILS_EXTENSION_NAME
-        };
+#endif
+
+#ifdef VK_EXT_DEBUG_UTILS_EXTENSION_NAME
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
 
         VkInstanceCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
