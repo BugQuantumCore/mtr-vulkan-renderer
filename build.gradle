@@ -86,7 +86,7 @@ jar {
     }
     // 包含编译好的原生库
     from("build-native/lib") {
-        include "*.so", "*.dll", "*.dylib"
+        include "*.so", "*.dll"
         into "native"
     }
 }
