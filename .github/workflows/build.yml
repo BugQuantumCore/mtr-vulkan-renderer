@@ -1,0 +1,93 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-java:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: java-build
+        path: build/libs/
+
+  build-native:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Vulkan SDK (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
+        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list https://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+        sudo apt update
+        sudo apt install vulkan-sdk
+
+    - name: Install Vulkan SDK (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install vulkan-sdk
+
+    - name: Install Vulkan SDK (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install vulkan-sdk
+
+    - name: Configure CMake
+      run: cmake -B build-native -S . -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build Native Library
+      run: cmake --build build-native --config Release
+
+    - name: Upload native library
+      uses: actions/upload-artifact@v3
+      with:
+        name: native-${{ runner.os }}
+        path: build-native/lib/
+
+  test:
+    needs: [build-java, build-native]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Run tests
+      run: |
+        echo "Tests would run here"
+        # ./gradlew test

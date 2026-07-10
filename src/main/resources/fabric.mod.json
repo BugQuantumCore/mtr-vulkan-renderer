@@ -18,6 +18,7 @@
             "com.mtr.vulkanrenderer.MTRVulkanRendererClient"
         ]
     },
+    "icon": "assets/mtr-vulkan-renderer/icon.png",
     "mixins": [
         "mtr-vulkan-renderer.mixins.json"
     ],
