@@ -27,7 +27,7 @@ jobs:
       run: ./gradlew build
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: java-build
         path: build/libs/
@@ -66,7 +66,7 @@ jobs:
       run: cmake --build build-native --config Release
 
     - name: Upload native library
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: native-${{ runner.os }}
         path: build-native/lib/
@@ -79,7 +79,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
 
     - name: Set up JDK 21
       uses: actions/setup-java@v3
