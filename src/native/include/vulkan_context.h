@@ -1,6 +1,5 @@
 #pragma once
 
-#define VOLK_IMPLEMENTATION
 #include <volk.h>
 #include <vk_mem_alloc.h>
 
@@ -35,7 +34,7 @@ public:
 
     /**
      * 从VulkanMod获取Vulkan句柄
-     * 这些值通过JNI从Java侧传入
+     * 这些��通过JNI从Java侧传入
      */
     void setExternalVulkanHandles(VkInstance instance, VkPhysicalDevice physicalDevice,
                                    VkDevice device, VkQueue graphicsQueue,
