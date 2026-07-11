@@ -60,8 +60,6 @@ cd mtr-vulkan-renderer
 # Windows: 从 https://vulkan.lunarg.com/sdk/home 下载安装
 # Linux (Ubuntu/Debian):
 sudo apt install vulkan-sdk
-# macOS:
-brew install vulkan-sdk
 
 # 设置环境变量（如果需要）
 export VULKAN_SDK=/path/to/vulkan-sdk
