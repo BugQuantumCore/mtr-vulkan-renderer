@@ -1,6 +1,7 @@
 #include "mesh_manager.h"
 #include <iostream>
 #include <cstring>
+#include <bits/stdc++.h>
 
 MeshManager::MeshManager(VulkanContext* context)
     : m_context(context) {}

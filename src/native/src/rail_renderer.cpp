@@ -3,6 +3,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cstring>
+#include <bits/stdc++.h>
 
 RailRenderer::RailRenderer(VulkanContext* context, MeshManager* meshManager)
     : m_context(context), m_meshManager(meshManager) {}

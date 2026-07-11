@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <bits/stdc++.h>
 
 VulkanPipeline::VulkanPipeline(VulkanContext* context)
     : m_context(context) {}

@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <cstring>
+#include <bits/stdc++.h>
 
 // 句柄映射表
 static std::unordered_map<uint64_t, std::unique_ptr<VulkanPipeline>> g_pipelines;

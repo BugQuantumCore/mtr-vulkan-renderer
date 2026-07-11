@@ -1,6 +1,7 @@
 #include "train_renderer.h"
 #include <iostream>
 #include <cstring>
+#include <bits/stdc++.h>
 
 TrainRenderer::TrainRenderer(VulkanContext* context, MeshManager* meshManager)
     : m_context(context), m_meshManager(meshManager) {}

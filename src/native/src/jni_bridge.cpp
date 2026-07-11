@@ -4,6 +4,7 @@
 #include <string>
 #include <cstring>
 #include <chrono>
+#include <bits/stdc++.h>
 
 // 全局渲染器实例
 static std::unique_ptr<MTRVulkanRenderer> g_renderer;

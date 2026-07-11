@@ -1,6 +1,7 @@
 #include "vulkan_buffer.h"
 #include <iostream>
 #include <cstring>
+#include <bits/stdc++.h>
 
 VulkanBuffer::VulkanBuffer(VulkanContext* context)
     : m_context(context) {}

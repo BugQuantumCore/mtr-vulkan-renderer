@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <vector>
+#include <bits/stdc++.h>
 
 VulkanContext::VulkanContext() {}
 
