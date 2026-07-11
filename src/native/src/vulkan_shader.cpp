@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <bits/stdc++.h>
 
 bool VulkanShader::loadSPIRV(const std::string& path, std::vector<char>& outCode) {
     std::ifstream file(path, std::ios::ate | std::ios::binary);

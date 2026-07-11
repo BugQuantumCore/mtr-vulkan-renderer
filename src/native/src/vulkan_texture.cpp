@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
-#include <bits/stdc++.h>
 
 VulkanTexture::VulkanTexture(VulkanContext* context)
     : m_context(context) {}

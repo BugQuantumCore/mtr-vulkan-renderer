@@ -1,6 +1,5 @@
 #define VOLK_IMPLEMENTATION
 #include <volk.h>
-#include <bits/stdc++.h>
 
 // Single translation unit that defines the volk implementation.
 // This file must be compiled exactly once into the library to avoid
