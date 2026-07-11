@@ -8,6 +8,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # 查找Vulkan SDK
 find_package(Vulkan REQUIRED)
 
+# Find or include VulkanMemoryAllocator
+find_package(VulkanMemoryAllocator CONFIG REQUIRED)
+
 # JNI查找
 find_package(JNI REQUIRED)
 include_directories(${JNI_INCLUDE_DIRS})
@@ -50,7 +53,7 @@ add_library(mtr_vulkan_renderer SHARED
     src/native/src/rail_renderer.cpp
 )
 
-target_include_directories(mtr_vulkan_renderer PRIVATE
+target_include_directories(mtr_vulkan_renderer PRIVATE vulkan VMA
     src/native/include
     ${JNI_INCLUDE_DIRS}
     ${Vulkan_INCLUDE_DIRS}
