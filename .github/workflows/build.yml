@@ -51,11 +51,33 @@ jobs:
 
     - name: Install Vulkan SDK (Windows)
       if: runner.os == 'Windows'
+      shell: powershell
       run: |
-        choco install vulkan-sdk
+        choco install -y vulkan-sdk
+        # refresh environment variables added by Chocolatey packages
+        refreshenv
+        # try to read VULKAN_SDK env var set by the installer
+        $sdkPath = $env:VULKAN_SDK
+        if (-not $sdkPath) {
+          # fallback: check C:\VulkanSDK for the newest installed version
+          $vdirs = Get-ChildItem 'C:\VulkanSDK' -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending
+          if ($vdirs) { $sdkPath = $vdirs[0].FullName }
+        }
+        if (-not $sdkPath) { Write-Error 'Vulkan SDK not found after installation'; exit 1 }
+        Write-Host "Found VULKAN_SDK: $sdkPath"
+        Add-Content -Path $env:GITHUB_ENV -Value "VULKAN_SDK=$sdkPath"
 
-    - name: Configure CMake
+    - name: Configure CMake (Linux)
+      if: runner.os == 'Linux'
       run: cmake -B build-native -S . -DCMAKE_BUILD_TYPE=Release
+
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      shell: powershell
+      run: |
+        if (-not $env:VULKAN_SDK) { Write-Error 'VULKAN_SDK is not set; aborting'; exit 1 }
+        Write-Host "Using VULKAN_SDK=$env:VULKAN_SDK"
+        cmake -B build-native -S . -DCMAKE_BUILD_TYPE=Release -DVulkan_INCLUDE_DIR="$env:VULKAN_SDK\Include" -DVulkan_LIBRARY="$env:VULKAN_SDK\Lib\vulkan-1.lib"
 
     - name: Build Native Library
       run: cmake --build build-native --config Release
