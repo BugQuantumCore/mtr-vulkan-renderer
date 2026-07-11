@@ -54,25 +54,6 @@ jobs:
       run: |
         choco install vulkan-sdk
 
-    - name: Install Vulkan SDK (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        set -euxo pipefail
-        brew update
-
-        # Try to install volk (some Homebrew setups expose this as 'vulkan-volk', others as 'volk')
-        if ! brew list --formula | grep -q '^vulkan-volk$'; then
-          if ! brew install vulkan-volk; then
-            brew install volk
-          fi
-        fi
-
-        # Ensure LunarG tap is available (some macOS setups require the tap for vulkan-sdk)
-        brew tap lunarg/vulkan || true
-
-        # Install the Vulkan SDK (will fail early if dependencies not satisfied)
-        brew install vulkan-sdk
-
     - name: Configure CMake
       run: cmake -B build-native -S . -DCMAKE_BUILD_TYPE=Release
 
