@@ -1,4 +1,5 @@
 #include "vulkan_texture.h"
+#include "vulkan_buffer.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
